@@ -13,14 +13,14 @@ echo "－－－－－－"
 echo "4.遊戲頻道"
 echo "5.鋒潮數據"
 read typed
-echo -n '需要自動速導入到MySQL？要(Y)不要(N):'
-read importswitch
-if [[ "${importswitch^^}" = "Y" ]];then
-	echo -n "輸入MySQL口令:"
-	stty -echo
-	read mysqlpwd
-	stty echo
-fi
+#echo -n '需要自動速導入到MySQL？要(Y)不要(N):'
+#read importswitch
+#if [[ "${importswitch^^}" = "Y" ]];then
+#	echo -n "輸入MySQL口令:"
+#	stty -echo
+#	read mysqlpwd
+#	stty echo
+#fi
 mon=${date_start:0:2}
 declare -i date_s
 date_s=${date_start:2:2}
@@ -152,96 +152,96 @@ esac
 mv awk.out $outputname
 echo "搞掂！"
 ############將預處理過的文件導入到MySQL#################
-[ "${importswitch^^}" != Y ] && exit
-echo "開始導入到MySQL"
-tablename=${outputname:10:100}
-mysql -uroot -p${mysqlpwd} ana -e"
-create table $tablename (
-page char(100),
-url text,
-status char(3),
-csdate date,
-cstime int(1),
-ip char(15),
-refer text,
-cnt int(11));
-"
-mysql -uroot --localinfile -p${mysqlpwd} ana -e"
-load data local infile '$outputname'
-into table $tablename fields terminated by ' ';
-"
-[ "$typed"!="4" ] && mysql -uroot -p${mysqlpwd} ana -e"
-create table ${tablename}_mod
-SELECT url,
-case when locate('typelist',url)=0 or locate('typelist=&',url)<>0 then ''
-else replace(SUBSTRING(url,locate('typelist',url)+9,2),'&','') end urltypelist,
-case when locate('recommandid',url)=0 or locate('recommandid=&',url)<>0 then ''
-else replace(SUBSTRING(url,locate('recommandid',url)+12,6),'&','') end urlreid,
-case when locate('&d',url)=0 or locate('d=&',url)<>0 then ''
-else replace(substring(url,locate('&d',url)+2,2),'&','') end urld,
-case when locate('cooid',url)=0 or locate('cooid=&',url)<>0 then ''
-else replace(substring(url,locate('cooid',url)+6,4),'&','') end urlcooid,
-case when locate('sysid',url)=0 or locate('sysid=&',url)<>0 then ''
-else replace(substring(url,locate('sysid',url)+6,3),'&','') end urlsysid,
-case when locate('fid',url)=0 or locate('fid=&',url)<>0 then ''
-else replace(substring(url,locate('fid',url)+4,6),'&','') end urlfid,
-case when locate('cin',url)=0 or locate('cin=&',url)<>0 then ''
-else replace(substring(url,locate('cin',url)+4,4),'&','') end urlcin,
-refer,
-case when locate('.3g.cn',refer)=0 then refer
-else LEFT(refer,locate('.3g.cn',refer)+6) end referdomain,
-case when locate('?',refer)=0 then refer
-else left(refer,locate('?',refer)-1) end referurl,
-case when locate('typelist',refer)=0 then ''
-else replace(SUBSTRING(refer,locate('typelist',refer),11),'&','') end refertypelist,
-case when locate('recommandid',refer)=0 then ''
-else replace(SUBSTRING(refer,locate('recommandid',refer),18),'&','') end referreid,
-case when locate('&d',refer)=0 then ''
-else replace(substring(refer,locate('&d',refer)+1,4),'&','') end referd,
-case when locate('cooid',refer)=0 then ''
-else replace(substring(refer,locate('cooid',refer),10),'&','') end refercooid,
-case when locate('cin',refer)=0 then ''
-else replace(substring(refer,locate('cin',refer),9),'&','') end refercin,
-page,status,ip,cnt,case when cstime+8>=24 then cstime+8-24 else cstime+8 end timecr,
-                         case when cstime+8>=24 then date_format(csdate+1,'%Y-%m-%d')
-                              else date_format(csdate,'%Y-%m-%d') end datecr
-from ${tablename}
-" && echo "done!"
-[ "$typed"="4" ] && mysql -uroot -p${mysqlpwd} ana -e"
-create table ${tablename}_mod
-SELECT url,
-case when locate('typelist',url)=0 or locate('typelist=&',url)<>0 then ''
-else replace(SUBSTRING(url,locate('typelist',url)+9,2),'&','') end urltypelist,
-case when locate('recommandid',url)=0 or locate('recommandid=&',url)<>0 then ''
-else replace(SUBSTRING(url,locate('recommandid',url)+12,6),'&','') end urlreid,
-case when locate('&d',url)=0 or locate('d=&',url)<>0 then ''
-else replace(substring(url,locate('&d',url)+2,2),'&','') end urld,
-case when locate('cooid',url)=0 or locate('cooid=&',url)<>0 then ''
-else replace(substring(url,locate('cooid',url)+6,4),'&','') end urlcooid,
-case when locate('sysid',url)=0 or locate('sysid=&',url)<>0 then ''
-else replace(substring(url,locate('sysid',url)+6,3),'&','') end urlsysid,
-case when locate('gid',url)=0 or locate('gid=&',url)<>0 then ''
-else replace(substring(url,locate('gid',url)+4,7),'&','') end urlgid,
-case when locate('cin',url)=0 or locate('cin=&',url)<>0 then ''
-else replace(substring(url,locate('cin',url)+4,4),'&','') end urlcin,
-refer,
-case when locate('.3g.cn',refer)=0 then refer
-else LEFT(refer,locate('.3g.cn',refer)+6) end referdomain,
-case when locate('?',refer)=0 then refer
-else left(refer,locate('?',refer)-1) end referurl,
-case when locate('typelist',refer)=0 then ''
-else replace(SUBSTRING(refer,locate('typelist',refer),11),'&','') end refertypelist,
-case when locate('recommandid',refer)=0 then ''
-else replace(SUBSTRING(refer,locate('recommandid',refer),18),'&','') end referreid,
-case when locate('&d',refer)=0 then ''
-else replace(substring(refer,locate('&d',refer)+1,4),'&','') end referd,
-case when locate('cooid',refer)=0 then ''
-else replace(substring(refer,locate('cooid',refer),10),'&','') end refercooid,
-case when locate('cin',refer)=0 then ''
-else replace(substring(refer,locate('cin',refer),9),'&','') end refercin,
-page,status,ip,cnt,case when cstime+8>=24 then cstime+8-24 else cstime+8 end timecr,
-                         case when cstime+8>=24 then date_format(csdate+1,'%Y-%m-%d')
-                              else date_format(csdate,'%Y-%m-%d') end datecr
-from ${tablename}
-" && echo "done!"
+#[ "${importswitch^^}" != Y ] && exit
+#echo "開始導入到MySQL"
+#tablename=${outputname:10:100}
+#mysql -uroot -p${mysqlpwd} ana -e"
+#create table $tablename (
+#page char(100),
+#url text,
+#status char(3),
+#csdate date,
+#cstime int(1),
+#ip char(15),
+#refer text,
+#cnt int(11));
+#"
+#mysql -uroot --localinfile -p${mysqlpwd} ana -e"
+#load data local infile '$outputname'
+#into table $tablename fields terminated by ' ';
+#"
+#[ "$typed"!="4" ] && mysql -uroot -p${mysqlpwd} ana -e"
+#create table ${tablename}_mod
+#SELECT url,
+#case when locate('typelist',url)=0 or locate('typelist=&',url)<>0 then ''
+#else replace(SUBSTRING(url,locate('typelist',url)+9,2),'&','') end urltypelist,
+#case when locate('recommandid',url)=0 or locate('recommandid=&',url)<>0 then ''
+#else replace(SUBSTRING(url,locate('recommandid',url)+12,6),'&','') end urlreid,
+#case when locate('&d',url)=0 or locate('d=&',url)<>0 then ''
+#else replace(substring(url,locate('&d',url)+2,2),'&','') end urld,
+#case when locate('cooid',url)=0 or locate('cooid=&',url)<>0 then ''
+#else replace(substring(url,locate('cooid',url)+6,4),'&','') end urlcooid,
+#case when locate('sysid',url)=0 or locate('sysid=&',url)<>0 then ''
+#else replace(substring(url,locate('sysid',url)+6,3),'&','') end urlsysid,
+#case when locate('fid',url)=0 or locate('fid=&',url)<>0 then ''
+#else replace(substring(url,locate('fid',url)+4,6),'&','') end urlfid,
+#case when locate('cin',url)=0 or locate('cin=&',url)<>0 then ''
+#else replace(substring(url,locate('cin',url)+4,4),'&','') end urlcin,
+#refer,
+#case when locate('.3g.cn',refer)=0 then refer
+#else LEFT(refer,locate('.3g.cn',refer)+6) end referdomain,
+#case when locate('?',refer)=0 then refer
+#else left(refer,locate('?',refer)-1) end referurl,
+#case when locate('typelist',refer)=0 then ''
+#else replace(SUBSTRING(refer,locate('typelist',refer),11),'&','') end refertypelist,
+#case when locate('recommandid',refer)=0 then ''
+#else replace(SUBSTRING(refer,locate('recommandid',refer),18),'&','') end referreid,
+#case when locate('&d',refer)=0 then ''
+#else replace(substring(refer,locate('&d',refer)+1,4),'&','') end referd,
+#case when locate('cooid',refer)=0 then ''
+#else replace(substring(refer,locate('cooid',refer),10),'&','') end refercooid,
+#case when locate('cin',refer)=0 then ''
+#else replace(substring(refer,locate('cin',refer),9),'&','') end refercin,
+#page,status,ip,cnt,case when cstime+8>=24 then cstime+8-24 else cstime+8 end timecr,
+#                         case when cstime+8>=24 then date_format(csdate+1,'%Y-%m-%d')
+#                              else date_format(csdate,'%Y-%m-%d') end datecr
+#from ${tablename}
+#" && echo "done!"
+#[ "$typed"="4" ] && mysql -uroot -p${mysqlpwd} ana -e"
+#create table ${tablename}_mod
+#SELECT url,
+#case when locate('typelist',url)=0 or locate('typelist=&',url)<>0 then ''
+#else replace(SUBSTRING(url,locate('typelist',url)+9,2),'&','') end urltypelist,
+#case when locate('recommandid',url)=0 or locate('recommandid=&',url)<>0 then ''
+#else replace(SUBSTRING(url,locate('recommandid',url)+12,6),'&','') end urlreid,
+#case when locate('&d',url)=0 or locate('d=&',url)<>0 then ''
+#else replace(substring(url,locate('&d',url)+2,2),'&','') end urld,
+#case when locate('cooid',url)=0 or locate('cooid=&',url)<>0 then ''
+#else replace(substring(url,locate('cooid',url)+6,4),'&','') end urlcooid,
+#case when locate('sysid',url)=0 or locate('sysid=&',url)<>0 then ''
+#else replace(substring(url,locate('sysid',url)+6,3),'&','') end urlsysid,
+#case when locate('gid',url)=0 or locate('gid=&',url)<>0 then ''
+#else replace(substring(url,locate('gid',url)+4,7),'&','') end urlgid,
+#case when locate('cin',url)=0 or locate('cin=&',url)<>0 then ''
+#else replace(substring(url,locate('cin',url)+4,4),'&','') end urlcin,
+#refer,
+#case when locate('.3g.cn',refer)=0 then refer
+#else LEFT(refer,locate('.3g.cn',refer)+6) end referdomain,
+#case when locate('?',refer)=0 then refer
+#else left(refer,locate('?',refer)-1) end referurl,
+#case when locate('typelist',refer)=0 then ''
+#else replace(SUBSTRING(refer,locate('typelist',refer),11),'&','') end refertypelist,
+#case when locate('recommandid',refer)=0 then ''
+#else replace(SUBSTRING(refer,locate('recommandid',refer),18),'&','') end referreid,
+#case when locate('&d',refer)=0 then ''
+#else replace(substring(refer,locate('&d',refer)+1,4),'&','') end referd,
+#case when locate('cooid',refer)=0 then ''
+#else replace(substring(refer,locate('cooid',refer),10),'&','') end refercooid,
+#case when locate('cin',refer)=0 then ''
+#else replace(substring(refer,locate('cin',refer),9),'&','') end refercin,
+#page,status,ip,cnt,case when cstime+8>=24 then cstime+8-24 else cstime+8 end timecr,
+#                         case when cstime+8>=24 then date_format(csdate+1,'%Y-%m-%d')
+#                              else date_format(csdate,'%Y-%m-%d') end datecr
+#from ${tablename}
+#" && echo "done!"
 echo "全部都搞掂喇！！！！"
