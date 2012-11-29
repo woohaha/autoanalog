@@ -128,7 +128,7 @@ zero_e=
 ##繼續處理零的佔位問題
 case $typed in
 	1)
-		awk '$4~/download.aspx/&&$0!~/[Gg]oogle[Bb]ot/&&$0!~/[Bb]aidu[Ss]pider/&&$0!~/[Rr]obot/{a[$4" "$5" "$10" "$1" "substr($2,1,2)" "$7" "$9]++}END{for(b in a){print b" "a[b]>>"awk.out"}}' 190/*.log 229/*.log
+		awk '$4~/download.php/&&$0!~/[Gg]oogle[Bb]ot/&&$0!~/[Bb]aidu[Ss]pider/&&$0!~/[Rr]obot/{a[$4" "$5" "$10" "$1" "substr($2,1,2)" "$7" "$9]++}END{for(b in a){print b" "a[b]>>"awk.out"}}' 190/*.log 229/*.log
 		outputname=${mon}${zero_s}${date_s}_${mon}${zero_e}${date_e}_softdown_`date +%Y%m%d`
 
 	;;
@@ -141,7 +141,7 @@ case $typed in
 		outputname=${mon}${zero_s}${date_s}_${mon}${zero_e}${date_e}_newversion_`date +%Y%m%d`
 	;;
 	4)
-		awk '$4~/download.aspx/&&$0!~/[Gg]oogle[Bb]ot/&&$0!~/[Bb]aidu[Ss]pider/&&$0!~/[Rr]obot/{a[$4" "$5" "$10" "$1" "substr($2,1,2)" "$7" "$9]++}END{for(b in a){print b" "a[b]>>"awk.out"}}' 231/*.log 269/*.log
+		awk '$4~/download.php/&&$0!~/[Gg]oogle[Bb]ot/&&$0!~/[Bb]aidu[Ss]pider/&&$0!~/[Rr]obot/{a[$4" "$5" "$10" "$1" "substr($2,1,2)" "$7" "$9]++}END{for(b in a){print b" "a[b]>>"awk.out"}}' 231/*.log 269/*.log
 		outputname=${mon}${zero_s}${date_s}_${mon}${zero_e}${date_e}_gamedown_`date +%Y%m%d`
 	;;
 #	5)
